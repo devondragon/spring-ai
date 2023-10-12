@@ -19,5 +19,3 @@ public class BedrockClient implements AiClient {
 	}
 
 }
-
-
