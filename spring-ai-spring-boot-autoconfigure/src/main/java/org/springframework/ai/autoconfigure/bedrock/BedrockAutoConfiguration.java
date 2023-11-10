@@ -20,9 +20,9 @@ public class BedrockAutoConfiguration {
     @ConditionalOnMissingBean
     public OpenAiClient bedrockClient(BedrockProperties bedrockProperties) {
         OpenAiClient openAiClient =
-                new OpenAiClient(theoOpenAiService(openAiProperties.getBaseUrl(), openAiProperties.getApiKey(), openAiProperties.getDuration()));
-        openAiClient.setTemperature(openAiProperties.getTemperature());
-        openAiClient.setModel(openAiProperties.getModel());
+                new OpenAiClient(theoOpenAiService(bedrockProperties.getBaseUrl(), bedrockProperties.getApiKey(), bedrockProperties.getDuration()));
+        openAiClient.setTemperature(bedrockProperties.getTemperature());
+        openAiClient.setModel(bedrockProperties.getModel());
         return openAiClient;
     }
 
