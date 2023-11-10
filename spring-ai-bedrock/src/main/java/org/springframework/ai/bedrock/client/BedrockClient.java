@@ -12,6 +12,9 @@ import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Implementation of {@link AiClient} backed by AWS Bedrock.
+ */
 public class BedrockClient implements AiClient {
 
 	private String apiEndpoint;
