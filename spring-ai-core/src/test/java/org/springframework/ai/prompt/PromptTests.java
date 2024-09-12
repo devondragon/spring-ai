@@ -1,11 +1,11 @@
 /*
- * Copyright 2023 the original author or authors.
+ * Copyright 2023 - 2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      https://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.springframework.ai.prompt;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.chat.prompt.SystemPromptTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +44,7 @@ class PromptTests {
 			String promptString = pt.render(model);
 		})
 			.isInstanceOf(IllegalStateException.class)
-			.hasMessage("All template variables were not replaced. Missing variable names are [lastName]");
+			.hasMessage("Not all template variables were replaced. Missing variable names are [lastName]");
 
 		pt.add("lastName", "Park"); // TODO investigate partial
 		String promptString = pt.render(model);
@@ -54,7 +56,7 @@ class PromptTests {
 		// to have access to Messages
 		Prompt prompt = pt.create(model);
 		assertThat(prompt.getContents()).isNotNull();
-		assertThat(prompt.getMessages()).isNotEmpty().hasSize(1);
+		assertThat(prompt.getInstructions()).isNotEmpty().hasSize(1);
 		System.out.println(prompt.getContents());
 
 		String systemTemplate = "You are a helpful assistant that translates {input_language} to {output_language}.";
@@ -86,7 +88,7 @@ class PromptTests {
 
 		// ChatPromptTemplate chatPromptTemplate = new ChatPromptTemplate(systemPrompt,
 		// humanPrompt);
-		// Prompt chatPrompt chatPromptTemplate.create(model);
+		// Prompt chatPrompt chatPromptTemplate.create(generative);
 
 	}
 

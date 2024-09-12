@@ -1,11 +1,11 @@
 /*
- * Copyright 2023-2023 the original author or authors.
+ * Copyright 2023 - 2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      https://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.springframework.ai.transformer;
 
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.ai.client.AiClient;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentTransformer;
-import org.springframework.ai.prompt.Prompt;
-import org.springframework.ai.prompt.PromptTemplate;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.util.Assert;
 
 /**
- * Keyword extractor that uses model to extract 'excerpt_keywords' metadata field.
+ * Keyword extractor that uses generative to extract 'excerpt_keywords' metadata field.
  *
  * @author Christian Tzolov
  */
@@ -44,18 +43,18 @@ public class KeywordMetadataEnricher implements DocumentTransformer {
 	/**
 	 * Model predictor
 	 */
-	private final AiClient aiClient;
+	private final ChatModel chatModel;
 
 	/**
 	 * The number of keywords to extract.
 	 */
 	private final int keywordCount;
 
-	public KeywordMetadataEnricher(AiClient aiClient, int keywordCount) {
-		Assert.notNull(aiClient, "AiClient must not be null");
+	public KeywordMetadataEnricher(ChatModel chatModel, int keywordCount) {
+		Assert.notNull(chatModel, "ChatModel must not be null");
 		Assert.isTrue(keywordCount >= 1, "Document count must be >= 1");
 
-		this.aiClient = aiClient;
+		this.chatModel = chatModel;
 		this.keywordCount = keywordCount;
 	}
 
@@ -65,7 +64,7 @@ public class KeywordMetadataEnricher implements DocumentTransformer {
 
 			var template = new PromptTemplate(String.format(KEYWORDS_TEMPLATE, keywordCount));
 			Prompt prompt = template.create(Map.of(CONTEXT_STR_PLACEHOLDER, document.getContent()));
-			String keywords = this.aiClient.generate(prompt).getGeneration().getText();
+			String keywords = this.chatModel.call(prompt).getResult().getOutput().getContent();
 			document.getMetadata().putAll(Map.of(EXCERPT_KEYWORDS_METADATA_KEY, keywords));
 		}
 		return documents;

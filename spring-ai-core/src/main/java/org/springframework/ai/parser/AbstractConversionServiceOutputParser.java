@@ -19,10 +19,13 @@ package org.springframework.ai.parser;
 import org.springframework.core.convert.support.DefaultConversionService;
 
 /**
+ * @deprecated Use the
+ * {@link org.springframework.ai.converter.AbstractConversionServiceOutputConverter}
+ * instead.
+ *
  * Abstract {@link OutputParser} implementation that uses a pre-configured
  * {@link DefaultConversionService} to convert the LLM output into the desired type
  * format.
- *
  * @param <T> Specifies the desired response type.
  * @author Mark Pollack
  * @author Christian Tzolov

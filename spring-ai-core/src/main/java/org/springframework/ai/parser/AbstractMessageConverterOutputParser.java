@@ -19,9 +19,11 @@ package org.springframework.ai.parser;
 import org.springframework.messaging.converter.MessageConverter;
 
 /**
+ * @deprecated Use the
+ * {@link org.springframework.ai.converter.AbstractMessageOutputConverter} instead.
+ *
  * Abstract {@link OutputParser} implementation that uses a pre-configured
  * {@link MessageConverter} to convert the LLM output into the desired type format.
- *
  * @param <T> Specifies the desired response type.
  * @author Mark Pollack
  * @author Christian Tzolov

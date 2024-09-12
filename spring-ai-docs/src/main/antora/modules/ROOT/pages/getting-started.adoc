@@ -1,42 +1,36 @@
+[[getting-started]]
 = Getting Started
 
-== API Keys
+This section offers jumping off points for how to get started using Spring AI.
 
-=== OpenAI
+You should follow the steps in each of the following section according to your needs.
 
-Create an account at link:https://platform.openai.com/signup[OpenAI Signup] and generate the token at link:https://platform.openai.com/account/api-keys[API Keys].
+NOTE: Spring AI supports Spring Boot 3.2.x and 3.3.x
 
-The Spring AI project defines a configuration property named `spring.ai.openai.api-key` that you should set to the value of the `API Key` obtained from `openai.com`.
+== Spring Initializr
 
-Exporting an environment variable is one way to set that configuration property.
+Head on over to https://start.spring.io/[start.spring.io] and select the AI Models and Vector Stores that you want to use in your new applications.
 
-[source,shell]
-----
-export SPRING_AI_OPENAI_API_KEY=<INSERT KEY HERE>
-----
+[[repositories]]
+== Add Milestone and Snapshot Repositories
 
-=== Azure OpenAI
-Obtain your Azure OpenAI `endpoint` and `api-key` from the Azure OpenAI Service section on link:https://portal.azure.com[Azure Portal].
+If you prefer to add the dependency snippets by hand, follow the directions in the following sections.
 
-The Spring AI project defines a configuration property named `spring.ai.azure.openai.api-key` that you should set to the value of the `API Key` obtained from Azure.
+To use the Milestone and Snapshot version, you need to add references to the Spring Milestone and/or Snapshot repositories in your build file.
 
-Exporting environment variables is one way to set these configuration properties.
-
-[source,shell]
-----
-export SPRING_AI_AZURE_OPENAI_API_KEY=<INSERT KEY HERE>
-export SPRING_AI_AZURE_OPENAI_ENDPOINT=<INSERT ENDPOINT URL HERE>
-----
-
-== Dependencies
-
-The Spring AI project provides artifacts in the Spring Milestone Repository.
-You will need to add configuration to add a reference to the Spring Milestone repository in your build file.
-For example, in maven, add the following repository definition.
+For Maven, add the following repository definitions as needed:
 
 [source,xml]
 ----
   <repositories>
+    <repository>
+      <id>spring-milestones</id>
+      <name>Spring Milestones</name>
+      <url>https://repo.spring.io/milestone</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
     <repository>
       <id>spring-snapshots</id>
       <name>Spring Snapshots</name>
@@ -48,112 +42,79 @@ For example, in maven, add the following repository definition.
   </repositories>
 ----
 
-Add the Spring Boot Starter depending on if you are using Azure Open AI or Open AI.
+For Gradle, add the following repository definitions as needed:
 
-* Azure OpenAI
-[source, xml]
+[source,groovy]
 ----
-    <dependency>
-        <groupId>org.springframework.experimental.ai</groupId>
-        <artifactId>spring-ai-azure-openai-spring-boot-starter</artifactId>
-        <version>0.2.0-SNAPSHOT</version>
-    </dependency>
-----
-
-* OpenAI
-
-[source, xml]
-----
-    <dependency>
-        <groupId>org.springframework.experimental.ai</groupId>
-        <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
-        <version>0.2.0-SNAPSHOT</version>
-    </dependency>
+repositories {
+  mavenCentral()
+  maven { url 'https://repo.spring.io/milestone' }
+  maven { url 'https://repo.spring.io/snapshot' }
+}
 ----
 
-== Spring CLI
 
-The Spring CLI makes it easy to create new applications with code in your terminal window.  Think of it as the 'create-react-app' of Spring for those familiar with the JavaScript ecosystem.
+[[dependency-management]]
+== Dependency Management
 
-Download the latest https://github.com/spring-projects-experimental/spring-cli/releases[Spring CLI Release]
+The Spring AI Bill of Materials (BOM) declares the recommended versions of all the dependencies used by a given release of Spring AI.
+Using the BOM from your application’s build script avoids the need for you to specify and maintain the dependency versions yourself.
+Instead, the version of the BOM you’re using determines the utilized dependency versions.
+It also ensures that you’re using supported and tested versions of the dependencies by default, unless you choose to override them.
 
-and follow the https://docs.spring.io/spring-cli/reference/installation.html#_setting_up_your_path_or_alias[instructions] to add `spring` to your `PATH`.
+If you’re a Maven user, you can use the BOM by adding the following to your pom.xml file -
 
-Create a simple AI application
+[source,xml]
+----
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-bom</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+----
 
-* For OpenAI
+Gradle users can also use the Spring AI BOM by leveraging Gradle (5.0+) native support for declaring dependency constraints using a Maven BOM.
+This is implemented by adding a 'platform' dependency handler method to the dependencies section of your Gradle build script.
+As shown in the snippet below this can then be followed by version-less declarations of the Starter Dependencies for the one or more spring-ai modules you wish to use, e.g. spring-ai-openai.
 
-```shell
-spring boot new ai
-```
+[source,gradle]
+----
+dependencies {
+  implementation platform("org.springframework.ai:spring-ai-bom:1.0.0-SNAPSHOT")
+  // Replace the following with the starter dependencies of specific modules you wish to use
+  implementation 'org.springframework.ai:spring-ai-openai'
+}
+----
 
-or
+[[add-dependencies]]
+== Add dependencies for specific components
 
-*  For Azure OpenAI
+Each of the following sections in the documentation shows which dependencies you need to add to your project build system.
 
-```shell
-spring boot new ai-azure
-```
-
-You can also `ADD` the same simple AI application to your current project using
-
-*  For OpenAI
-```shell
-spring boot add ai
-```
-
-or
-
-*  For Azure OpenAI
-```shell
-spring boot add ai-azure
-```
-
-There is a project catalog available for Azure OpenAI that covers more functionality.
-Add the catalog by running the command
-
-* For Azure Open AI
-
-```shell
-spring project-catalog add ai-azure
-```
-
-Now you have the following projects that you can use to create a new project using the `spring boot new` command or add to your existing project using the `spring boot add` command.
-
-```shell
-spring project list
-
-├──────────────────────────┼───────────────┼────────────────────────────────────────────────────────────────────┼────────┼───────────────┤
-│ai-azure-hello-world      │AI - Hello,    │https://github.com/rd-1-2022/ai-azure-openai-helloworld             │ai-azure│[java-17,      │
-│                          │World          │                                                                    │        │boot-3.1.x, ai,│
-│                          │               │                                                                    │        │azure, web]    │
-├──────────────────────────┼───────────────┼────────────────────────────────────────────────────────────────────┼────────┼───────────────┤
-│ai-azure-prompt-templating│AI - Prompt    │https://github.com/rd-1-2022/ai-azure-prompt-template               │ai-azure│[java-17,      │
-│                          │Templating     │                                                                    │        │boot-3.1.x, ai,│
-│                          │               │                                                                    │        │azure, prompt  │
-│                          │               │                                                                    │        │templating]    │
-├──────────────────────────┼───────────────┼────────────────────────────────────────────────────────────────────┼────────┼───────────────┤
-│ai-azure-prompt-roles     │AI - Prompt    │https://github.com/rd-1-2022/ai-azure-openai-prompt-roles           │ai-azure│[java-17,      │
-│                          │Templating     │                                                                    │        │boot-3.1.x, ai,│
-│                          │               │                                                                    │        │azure, prompt  │
-│                          │               │                                                                    │        │roles]         │
-├──────────────────────────┼───────────────┼────────────────────────────────────────────────────────────────────┼────────┼───────────────┤
-│ai-azure-stuff-prompt     │AI - Stuff the │https://github.com/rd-1-2022/ai-azure-stuff-prompt                  │ai-azure│[java-17,      │
-│                          │prompt         │                                                                    │        │boot-3.1.x, ai,│
-│                          │               │                                                                    │        │azure, prompt  │
-│                          │               │                                                                    │        │stuff]         │
-├──────────────────────────┼───────────────┼────────────────────────────────────────────────────────────────────┼────────┼───────────────┤
-│ai-azure-prompt-rag       │AI - Retrieval │https://github.com/rd-1-2022/ai-azure-retrieval-augmented-generation│ai-azure│[java-17,      │
-│                          │Augmented      │                                                                    │        │boot-3.1.x, ai,│
-│                          │Generation     │                                                                    │        │azure,         │
-│                          │               │                                                                    │        │retrieval]     │
-└──────────────────────────┴───────────────┴────────────────────────────────────────────────────────────────────┴────────┴───────────────┘
-```
-
+* xref:api/chatmodel.adoc[Chat Models]
+* xref:api/embeddings.adoc[Embeddings Models]
+* xref:api/imageclient.adoc[Image Generation Models]
+* xref:api/audio/transcriptions.adoc[Transcription Models]
+* xref:api/audio/speech.adoc[Text-To-Speech (TTS) Models]
+* xref:api/vectordbs.adoc[Vector Databases]
 
 == Sample Projects
 
 You can clone these projects on GitHub to get started.
+
+=== Flight Booking Assistant
+
+https://github.com/tzolov/playground-flight-booking
+
+AI-powered system that has access to terms and conditions (Retrieval Augmented Generation, RAG),
+access tools (Java methods) to perform actions (Function Calling) and uses an LLM to interact with the user
+
 
 === OpenAI
 
@@ -162,8 +123,9 @@ You can clone these projects on GitHub to get started.
 === Azure OpenAI
 
 * https://github.com/rd-1-2022/ai-azure-openai-helloworld
-* https://github.com/rd-1-2022/ai-azure-stuff-prompt
-* https://github.com/rd-1-2022/ai-azure-prompt-template
-* https://github.com/rd-1-2022/ai-azure-openai-prompt-roles
-* https://github.com/rd-1-2022/ai-azure-retrieval-augmented-generation
+* https://github.com/Azure-Samples/spring-ai-azure-workshop
 
+// * https://github.com/rd-1-2022/ai-azure-stuff-prompt
+// * https://github.com/rd-1-2022/ai-azure-prompt-template
+// * https://github.com/rd-1-2022/ai-azure-openai-prompt-roles
+// * https://github.com/rd-1-2022/ai-azure-retrieval-augmented-generation
